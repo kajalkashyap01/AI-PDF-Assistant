@@ -1,13 +1,10 @@
+
 from __future__ import annotations
 
 import streamlit as st
 
 
 def render_settings_page() -> None:
-    """
-    Render the AI Assistant settings page.
-    Settings are stored for the current Streamlit session.
-    """
 
     # --------------------------------------------------
     # SESSION DEFAULTS
@@ -24,128 +21,165 @@ def render_settings_page() -> None:
         st.session_state.setdefault(key, value)
 
     # --------------------------------------------------
-    # PAGE-SPECIFIC STYLING
+    # CUSTOM STYLING
     # --------------------------------------------------
 
     st.markdown(
         """
         <style>
-        .ai-settings-header {
-            margin-bottom: 28px;
+
+        /* PAGE HEADER */
+
+        .settings-header {
+            margin-bottom: 30px;
         }
 
-        .ai-settings-eyebrow {
-            margin-bottom: 7px;
-            color: #8b8b8b;
-            font-size: 10px;
+        .settings-eyebrow {
+            color: #43866b;
+            font-size: 11px;
             font-weight: 800;
-            letter-spacing: 1.8px;
-            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
         }
 
-        .ai-settings-heading {
+        .settings-title {
+            color: #183d30;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
             margin: 0;
-            color: #111111;
-            font-size: 30px;
-            font-weight: 800;
-            letter-spacing: -0.8px;
         }
 
-        .ai-settings-subtitle {
+        .settings-subtitle {
+            color: #77857e;
+            font-size: 14px;
             margin-top: 8px;
-            color: #777777;
-            font-size: 13px;
         }
 
-        .ai-settings-icon {
+        /* SECTION LABEL */
+
+        .settings-section-label {
+            color: #718078;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 13px;
+        }
+
+        /* CARD CONTENT */
+
+        .settings-card-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .settings-icon {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            margin-bottom: 14px;
+            width: 42px;
+            height: 42px;
             border-radius: 12px;
-            background: #fff6c9;
-            color: #111111;
-            font-size: 18px;
-            font-weight: 700;
+            background: #e8f3ed;
+            color: #286448;
+            font-size: 21px;
         }
 
-        .ai-settings-card-title {
-            margin-bottom: 5px;
-            color: #111111;
+        .settings-card-title {
+            color: #1e4033;
             font-size: 17px;
             font-weight: 750;
         }
 
-        .ai-settings-card-description {
-            min-height: 36px;
-            margin-bottom: 18px;
-            color: #888888;
+        .settings-card-description {
+            color: #849087;
             font-size: 12px;
-            line-height: 1.5;
+            line-height: 1.6;
+            margin-bottom: 22px;
         }
 
-        .ai-settings-note {
-            margin-top: 14px;
-            padding: 10px 12px;
-            border-left: 3px solid #f5c518;
-            border-radius: 5px;
-            background: #fffbea;
-            color: #666666;
-            font-size: 11px;
-            line-height: 1.5;
+        /* MODEL CARDS */
+
+        .model-box {
+            padding: 17px;
+            min-height: 91px;
+            border: 1px solid #e5eee8;
+            border-radius: 11px;
+            background: #f8fbf9;
         }
 
-        .ai-settings-model-box {
-            margin-top: 8px;
-            padding: 12px;
-            border: 1px solid #e5e5e2;
-            border-radius: 9px;
-            background: #fafaf8;
-        }
-
-        .ai-settings-model-label {
-            margin-bottom: 3px;
-            color: #999999;
+        .model-label {
+            color: #829087;
             font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            margin-bottom: 9px;
             text-transform: uppercase;
         }
 
-        .ai-settings-model-value {
-            color: #222222;
-            font-size: 12px;
-            font-weight: 650;
+        .model-name {
+            color: #244d3b;
+            font-size: 13px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
         }
 
-        .ai-settings-save-title {
-            color: #111111;
-            font-size: 15px;
+        /* SAVE AREA */
+
+        .save-heading {
+            color: #214735;
+            font-size: 16px;
             font-weight: 750;
         }
 
-        div[data-testid="stVerticalBlockBorderWrapper"] {
-            border-color: #e5e5e2 !important;
-            border-radius: 14px !important;
-            background: #ffffff;
+        .save-description {
+            color: #829087;
+            font-size: 12px;
+            margin-top: 5px;
         }
 
+        /* STREAMLIT CARDS */
+
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            border: 1px solid #e5ece7 !important;
+            border-radius: 15px !important;
+            background: #ffffff !important;
+        }
+
+        /* INPUT LABELS */
+
+        div[data-testid="stWidgetLabel"] p {
+            color: #344b3e !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+        }
+
+        /* SAVE BUTTON */
+
         div.stButton > button[kind="primary"] {
-            min-height: 42px;
+            min-height: 43px;
             border: none;
             border-radius: 9px;
-            background: #111111;
-            color: #ffffff;
+            background: #286448;
+            color: white;
+            font-size: 13px;
             font-weight: 700;
         }
 
         div.stButton > button[kind="primary"]:hover {
+            background: #1c4d36;
+            color: white;
             border: none;
-            background: #2b2b2b;
-            color: #ffffff;
         }
+
+        /* RADIO OPTIONS */
+
+        div[data-testid="stRadio"] label {
+            color: #344b3e;
+        }
+
         </style>
         """,
         unsafe_allow_html=True,
@@ -157,11 +191,11 @@ def render_settings_page() -> None:
 
     st.markdown(
         """
-        <div class="ai-settings-header">
-            <div class="ai-settings-eyebrow">PREFERENCES</div>
-            <h1 class="ai-settings-heading">Settings</h1>
-            <div class="ai-settings-subtitle">
-                Personalize your AI Assistant workspace and document experience.
+        <div class="settings-header">
+            <div class="settings-eyebrow">WORKSPACE PREFERENCES</div>
+            <h1 class="settings-title">Settings</h1>
+            <div class="settings-subtitle">
+                Manage your chat preferences and document experience.
             </div>
         </div>
         """,
@@ -169,28 +203,31 @@ def render_settings_page() -> None:
     )
 
     # --------------------------------------------------
-    # SETTINGS CARDS
+    # PREFERENCES SECTION
     # --------------------------------------------------
 
-    left_column, right_column = st.columns(
-        2,
-        gap="large",
+    st.markdown(
+        '<div class="settings-section-label">GENERAL PREFERENCES</div>',
+        unsafe_allow_html=True,
     )
 
-    # --------------------------------------------------
-    # CHAT EXPERIENCE
-    # --------------------------------------------------
+    left_column, right_column = st.columns(2, gap="large")
+
+    # CHAT SETTINGS
 
     with left_column:
         with st.container(border=True):
+
             st.markdown(
                 """
-                <div class="ai-settings-icon">✦</div>
-                <div class="ai-settings-card-title">
-                    Chat experience
+                <div class="settings-card-heading">
+                    <div class="settings-icon">✦</div>
+                    <div class="settings-card-title">
+                        Chat experience
+                    </div>
                 </div>
-                <div class="ai-settings-card-description">
-                    Control how AI Assistant presents answers from your PDF.
+                <div class="settings-card-description">
+                    Personalize how the AI assistant responds to your questions.
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -199,50 +236,48 @@ def render_settings_page() -> None:
             st.toggle(
                 "Show source references",
                 key="settings_show_sources",
-                help=(
-                    "Show the retrieved PDF text and page numbers "
-                    "with assistant answers."
-                ),
+                help="Display PDF source references with answers.",
             )
 
             st.selectbox(
                 "Answer style",
-                options=[
-                    "Concise",
-                    "Detailed",
-                    "Step-by-step",
-                ],
+                options=["Concise", "Detailed", "Step-by-step"],
                 key="settings_answer_style",
-                help=(
-                    "Choose how much explanation the assistant "
-                    "should provide."
-                ),
+                help="Choose your preferred answer format.",
             )
 
             st.markdown(
                 """
-                <div class="ai-settings-note">
-                    Source references help you verify answers directly
-                    against the uploaded document.
+                <div style="
+                    margin-top: 17px;
+                    padding: 12px;
+                    background: #f0f7f2;
+                    border-radius: 9px;
+                    color: #52715e;
+                    font-size: 12px;
+                    line-height: 1.6;">
+                    Source references make it easier to verify answers
+                    against your uploaded PDF.
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
-    # --------------------------------------------------
-    # DOCUMENT EXPERIENCE
-    # --------------------------------------------------
+    # DOCUMENT SETTINGS
 
     with right_column:
         with st.container(border=True):
+
             st.markdown(
                 """
-                <div class="ai-settings-icon">▤</div>
-                <div class="ai-settings-card-title">
-                    Document experience
+                <div class="settings-card-heading">
+                    <div class="settings-icon">▤</div>
+                    <div class="settings-card-title">
+                        Document experience
+                    </div>
                 </div>
-                <div class="ai-settings-card-description">
-                    Customize PDF viewing and document management behavior.
+                <div class="settings-card-description">
+                    Customize how documents are displayed and managed.
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -250,111 +285,116 @@ def render_settings_page() -> None:
 
             st.radio(
                 "PDF display mode",
-                options=[
-                    "Fit Width",
-                    "Original Size",
-                ],
+                options=["Fit Width", "Original Size"],
                 key="settings_pdf_view",
             )
+
+            st.markdown("<div style='height: 10px'></div>",
+                        unsafe_allow_html=True)
 
             st.checkbox(
                 "Confirm before deleting",
                 key="settings_confirm_delete",
-                help=(
-                    "Ask for confirmation before removing the active PDF."
-                ),
+                help="Ask for confirmation before removing a PDF.",
+            )
+
+            st.markdown(
+                """
+                <div style="
+                    margin-top: 17px;
+                    padding: 12px;
+                    background: #f0f7f2;
+                    border-radius: 9px;
+                    color: #52715e;
+                    font-size: 12px;
+                    line-height: 1.6;">
+                    Choose how your PDF is displayed in the workspace.
+                </div>
+                """,
+                unsafe_allow_html=True,
             )
 
     # --------------------------------------------------
-    # ACTIVE AI MODELS
+    # AI MODELS
     # --------------------------------------------------
 
-    st.markdown("<div style='height: 22px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 28px'></div>",
+                unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="settings-section-label">SYSTEM INFORMATION</div>',
+        unsafe_allow_html=True,
+    )
 
     with st.container(border=True):
+
         st.markdown(
             """
-            <div class="ai-settings-card-title">
-                Active AI models
+            <div class="settings-card-heading">
+                <div class="settings-icon">✧</div>
+                <div class="settings-card-title">
+                    Active AI models
+                </div>
             </div>
-            <div class="ai-settings-card-description">
-                These models power document search, reranking, and answers.
+            <div class="settings-card-description">
+                Models currently configured for your document assistant.
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        model_column_1, model_column_2, model_column_3 = st.columns(3)
+        model_col1, model_col2, model_col3 = st.columns(3, gap="medium")
 
-        with model_column_1:
-            st.markdown(
-                """
-                <div class="ai-settings-model-box">
-                    <div class="ai-settings-model-label">Chat</div>
-                    <div class="ai-settings-model-value">
-                        command-a-03-2025
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+        models = [
+            ("CHAT MODEL", "command-a-03-2025"),
+            ("EMBEDDING MODEL", "embed-english-v3.0"),
+            ("RERANKING MODEL", "rerank-english-v3.0"),
+        ]
 
-        with model_column_2:
-            st.markdown(
-                """
-                <div class="ai-settings-model-box">
-                    <div class="ai-settings-model-label">Embeddings</div>
-                    <div class="ai-settings-model-value">
-                        embed-english-v3.0
+        for column, model in zip(
+            [model_col1, model_col2, model_col3],
+            models,
+        ):
+            with column:
+                st.markdown(
+                    f"""
+                    <div class="model-box">
+                        <div class="model-label">{model[0]}</div>
+                        <div class="model-name">{model[1]}</div>
                     </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-        with model_column_3:
-            st.markdown(
-                """
-                <div class="ai-settings-model-box">
-                    <div class="ai-settings-model-label">Reranking</div>
-                    <div class="ai-settings-model-value">
-                        rerank-english-v3.0
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+                    """,
+                    unsafe_allow_html=True,
+                )
 
     # --------------------------------------------------
-    # SAVE SETTINGS
+    # SAVE PREFERENCES
     # --------------------------------------------------
 
-    st.markdown("<div style='height: 22px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 25px'></div>",
+                unsafe_allow_html=True)
 
     with st.container(border=True):
-        save_column, button_column = st.columns(
+
+        save_col, button_col = st.columns(
             [3, 1],
             vertical_alignment="center",
         )
 
-        with save_column:
+        with save_col:
             st.markdown(
-                '<div class="ai-settings-save-title">'
-                "Workspace preferences"
-                "</div>",
+                """
+                <div class="save-heading">Workspace preferences</div>
+                <div class="save-description">
+                    Your selected preferences are maintained in this session.
+                </div>
+                """,
                 unsafe_allow_html=True,
             )
 
-            st.caption(
-                "Save your changes for the current session."
-            )
-
-        with button_column:
+        with button_col:
             if st.button(
                 "Save changes",
                 type="primary",
                 use_container_width=True,
             ):
-                st.success(
-                    "Your preferences have been saved."
-                )
+                st.success("Your preferences have been saved.")
