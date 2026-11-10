@@ -3,10 +3,10 @@ import streamlit as st
 
 def render_navigation(active_page: str = "Workspace") -> str:
     pages = [
-        ("Workspace", "▣"),
-        ("Documents", "▤"),
-        ("Settings", "⚙"),
-        ("Help & About", "?"),
+        ("Workspace", "dashboard"),
+        ("Documents", "description"),
+        ("Settings", "settings"),
+        ("Help & About", "help_outline"),
     ]
 
     if "current_page" not in st.session_state:
@@ -16,16 +16,16 @@ def render_navigation(active_page: str = "Workspace") -> str:
         st.markdown(
             """
             <div class="ai-sidebar-brand">
-                <div class="ai-brand-icon">AI</div>
+                <div class="ai-brand-icon">PDF</div>
                 <div class="ai-brand-name">AI Assistant</div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        # New Chat button
         if st.button(
-            "＋  New Chat",
+            "New Chat",
+            icon=":material/add:",
             key="new_chat_button",
             use_container_width=True,
             type="primary",
@@ -37,28 +37,28 @@ def render_navigation(active_page: str = "Workspace") -> str:
             st.session_state["pdf_fingerprint"] = None
             st.session_state["pdf_page_number"] = 0
             st.session_state["active_document_id"] = None
-            st.session_state["pdf_uploader_version"] += 1
+            st.session_state["pdf_uploader_version"] = (
+                st.session_state.get("pdf_uploader_version", 0) + 1
+            )
             st.session_state["current_page"] = "Workspace"
             st.rerun()
 
         st.markdown(
             """
             <div class="ai-sidebar-divider"></div>
-            <div class="ai-sidebar-label">WORKSPACE</div>
+            <div class="ai-sidebar-label">MENU</div>
             """,
             unsafe_allow_html=True,
         )
 
-        for page_name, page_icon in pages:
+        for page_name, icon_name in pages:
             is_active = st.session_state["current_page"] == page_name
-
-            button_type = "primary" if is_active else "secondary"
-
             if st.button(
-                f"{page_icon}   {page_name}",
+                page_name,
+                icon=f":material/{icon_name}:",
                 key=f"ai_navigation_{page_name}",
                 use_container_width=True,
-                type=button_type,
+                type="primary" if is_active else "secondary",
             ):
                 st.session_state["current_page"] = page_name
                 st.rerun()
@@ -66,7 +66,6 @@ def render_navigation(active_page: str = "Workspace") -> str:
         st.markdown(
             """
             <div class="ai-sidebar-divider ai-sidebar-bottom-divider"></div>
-
             <div class="ai-sidebar-status">
                 <span class="ai-status-dot"></span>
                 <span>Assistant ready</span>

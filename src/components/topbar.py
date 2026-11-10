@@ -1,52 +1,36 @@
-from __future__ import annotations
-
+import html
 import streamlit as st
 
 
 def render_topbar(document_name: str | None = None) -> None:
-    """
-    Render the topbar using native Streamlit components.
-    This avoids HTML being displayed as code.
-    """
-
     left_column, right_column = st.columns(
         [0.68, 0.32],
         vertical_alignment="center",
     )
 
     with left_column:
-        logo_column, title_column = st.columns(
-            [0.08, 0.92],
-            vertical_alignment="center",
+        st.markdown(
+            """
+            <div class="topbar-brand">
+                <div class="topbar-logo">PDF</div>
+                <div>
+                    <div class="topbar-title">PDF Assistant</div>
+                    <div class="topbar-subtitle">Your intelligent document workspace</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
-
-        with logo_column:
-            st.markdown(
-                '<div class="native-ai-logo">AI</div>',
-                unsafe_allow_html=True,
-            )
-
-        with title_column:
-            st.markdown(
-                '<div class="native-ai-title">AI Assistant</div>',
-                unsafe_allow_html=True,
-            )
-
-            st.markdown(
-                '<div class="native-ai-subtitle">'
-                "Ask questions about your document"
-                "</div>",
-                unsafe_allow_html=True,
-            )
 
     with right_column:
         if document_name:
-            document_label = f"▤  {document_name}  ●"
+            safe_name = html.escape(str(document_name))
+            status_text = f'<span class="status-dot"></span>{safe_name}'
         else:
-            document_label = "▤  No document uploaded"
+            status_text = '<span class="status-dot"></span>No document uploaded'
 
         st.markdown(
-            f'<div class="native-document-status">{document_label}</div>',
+            f'<div class="native-document-status">{status_text}</div>',
             unsafe_allow_html=True,
         )
 
