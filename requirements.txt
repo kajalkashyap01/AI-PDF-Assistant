@@ -1,5 +1,5 @@
 streamlit>=1.40.0
-cohere>=5.11.0
+cohere>=5.21.0
 pinecone>=5.0.0
 PyMuPDF>=1.24.0
 python-dotenv>=1.0.1

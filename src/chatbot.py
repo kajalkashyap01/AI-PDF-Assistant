@@ -725,6 +725,7 @@ Before sending every answer:
 5. If a diagram was requested, check that actual Mermaid
    code is included in a mermaid fenced code block.
 6. Never claim inability to draw a diagram.
+
 """
 
     # -------------------------------------------------
