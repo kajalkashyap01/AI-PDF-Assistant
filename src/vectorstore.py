@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import hashlib
 import re
+import random
+import time
 from pathlib import Path
 from typing import Any
 
@@ -343,11 +345,58 @@ class VectorStore:
     # COHERE EMBEDDINGS
     # -------------------------------------------------
 
+    @staticmethod
+    def _retry_rate_limit(operation, attempts: int = 4):
+        """Retry only temporary API throttling or server failures."""
+        for attempt in range(attempts):
+            try:
+                return operation()
+            except Exception as exc:
+                status = getattr(exc, "status_code", None)
+                if status is None:
+                    status = getattr(
+                        getattr(exc, "response", None),
+                        "status_code",
+                        None,
+                    )
+
+                if (
+                    status not in (429, 500, 502, 503, 504)
+                    or attempt == attempts - 1
+                ):
+                    raise
+
+                response = getattr(exc, "response", None)
+                headers = getattr(response, "headers", {}) or {}
+                retry_after = headers.get("Retry-After")
+
+                try:
+                    delay = (
+                        min(60.0, max(0.0, float(retry_after)))
+                        if retry_after
+                        else min(
+                            30.0,
+                            2 ** attempt + random.random(),
+                        )
+                    )
+                except (ValueError, TypeError):
+                    delay = min(
+                        30.0,
+                        2 ** attempt + random.random(),
+                    )
+
+                time.sleep(delay)
+
     def embed_chunks(
         self,
         batch_size: int = 90,
     ) -> None:
         """Generate document embeddings in batches."""
+
+        if not 1 <= batch_size <= 96:
+            raise ValueError(
+                "batch_size must be between 1 and 96."
+            )
 
         self.embeddings.clear()
 
@@ -357,13 +406,15 @@ class VectorStore:
                 start:start + batch_size
             ]
 
-            response = self.cohere_client.embed(
-                texts=[
-                    item["text"]
-                    for item in batch
-                ],
-                model=self.EMBEDDING_MODEL,
-                input_type="search_document",
+            response = self._retry_rate_limit(
+                lambda: self.cohere_client.embed(
+                    texts=[
+                        item["text"]
+                        for item in batch
+                    ],
+                    model=self.EMBEDDING_MODEL,
+                    input_type="search_document",
+                )
             )
 
             batch_embeddings = response.embeddings
@@ -375,7 +426,10 @@ class VectorStore:
                 )
 
             self.embeddings.extend(
-                [list(vector) for vector in batch_embeddings]
+                [
+                    list(vector)
+                    for vector in batch_embeddings
+                ]
             )
 
         for embedding in self.embeddings:
@@ -483,12 +537,20 @@ class VectorStore:
                 "There are no vectors to upload."
             )
 
-        self.index.upsert(
-            vectors=vector_records,
-            namespace=self.document_namespace,
-            batch_size=100,
-            show_progress=False,
-        )
+        # Smaller uploads reduce payload size
+        # and allow safe retries.
+        for start in range(0, len(vector_records), 50):
+
+            batch = vector_records[
+                start:start + 50
+            ]
+
+            self._retry_rate_limit(
+                lambda batch=batch: self.index.upsert(
+                    vectors=batch,
+                    namespace=self.document_namespace,
+                )
+            )
 
     # -------------------------------------------------
     # RETRIEVAL AND RERANKING
@@ -508,10 +570,12 @@ class VectorStore:
 
         query = query.strip()
 
-        query_response = self.cohere_client.embed(
-            texts=[query],
-            model=self.EMBEDDING_MODEL,
-            input_type="search_query",
+        query_response = self._retry_rate_limit(
+            lambda: self.cohere_client.embed(
+                texts=[query],
+                model=self.EMBEDDING_MODEL,
+                input_type="search_query",
+            )
         )
 
         query_embedding = list(
@@ -590,7 +654,10 @@ class VectorStore:
 
                 result_index = result.index
 
-                if 0 <= result_index < len(retrieved_documents):
+                if (
+                    0 <= result_index
+                    < len(retrieved_documents)
+                ):
                     final_documents.append(
                         retrieved_documents[result_index]
                     )
